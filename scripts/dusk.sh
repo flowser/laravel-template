@@ -2,8 +2,8 @@
 
 set -Eeo pipefail
 
-CODE_CONTAINER_NAME="erev_app"
-DUSK_CONTAINER_NAME="erev_dusk"
+CODE_CONTAINER_NAME="template_app"
+DUSK_CONTAINER_NAME="template_dusk"
 DUSK_CONTAINER_IMAGE="seleniarm/standalone-chromium:latest"
 
 if [ "$(uname -m)" != "arm64" ]; then
@@ -46,10 +46,10 @@ if [ ! -f "vendor/laravel/dusk/bin/chromedriver-linux" ]; then
 fi
 
 echo "Starting Selenium Container"
-docker run --add-host "erev.docker:host-gateway" \
+docker run --add-host "template.docker:host-gateway" \
            --detach \
            --name "$DUSK_CONTAINER_NAME" \
-           --network "st-internal" \
+           --network "marines-internal" \
            --shm-size "2g" \
            "$DUSK_CONTAINER_IMAGE" >/dev/null
 

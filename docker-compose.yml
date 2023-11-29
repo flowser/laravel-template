@@ -1,70 +1,70 @@
-version: '3.7'
+version: "3.7"
 services:
-  moff-template-app:
-    image: nginx:latest
-    container_name: moff_template_app
-    environment:
-      - VIRTUAL_HOST=mofftemplate.docker
-      - CONTAINER_ROLE=app
-    volumes:
-      - type: bind
-        source: ./
-        target: /code
-        consistency: delegated
-      - type: bind
-        source: ./docker/config/vhost.conf
-        target: /etc/nginx/conf.d/vhost.conf
-    networks:
-      - moffhub_internal
-  moff-template-code:
-    container_name: moff_template_code
-    environment:
-      - SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
-      - XDEBUG_CONFIG=remote_host=host.docker.internal
-      - PHP_IDE_CONFIG=serverName=docker
-    build: ./docker
-    image: moff-template
-    volumes:
-      - type: bind
-        source: ./
-        target: /code
-      - type: bind
-        source: /run/host-services/ssh-auth.sock
-        target: /run/host-services/ssh-auth.sock
-    networks:
-      - moffhub_internal
-    ports:
-      - '5178:5178'
-  moff-template-queue:
-    image: moff-template
-    container_name: moff_template_queue
-    restart: always
-    working_dir: /code
-    command: php artisan queue:work --queue=high,medium,default --tries=3
-    depends_on:
-      - moff-template-app
-    volumes:
-      - ./:/code
-    networks:
-      - moffhub_internal
+    template-app:
+        image: nginx:latest
+        container_name: template_app
+        environment:
+            - VIRTUAL_HOST=mofftemplate.docker
+            - CONTAINER_ROLE=app
+        volumes:
+            - type: bind
+              source: ./
+              target: /code
+              consistency: delegated
+            - type: bind
+              source: ./docker/config/vhost.conf
+              target: /etc/nginx/conf.d/vhost.conf
+        networks:
+            - marines-internal
+    template-code:
+        container_name: template_code
+        environment:
+            - SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
+            - XDEBUG_CONFIG=remote_host=host.docker.internal
+            - PHP_IDE_CONFIG=serverName=docker
+        build: ./docker
+        image: template
+        volumes:
+            - type: bind
+              source: ./
+              target: /code
+            - type: bind
+              source: /run/host-services/ssh-auth.sock
+              target: /run/host-services/ssh-auth.sock
+        networks:
+            - marines-internal
+        ports:
+            - "5178:5178"
+    template-queue:
+        image: template
+        container_name: template_queue
+        restart: always
+        working_dir: /code
+        command: php artisan queue:work --queue=high,medium,default --tries=3
+        depends_on:
+            - template-app
+        volumes:
+            - ./:/code
+        networks:
+            - marines-internal
 
-  moff-template_scheduler:
-    image: moff-template
-    container_name: moff_template_scheduler
-    depends_on:
-      - moff-template-app
-    restart: unless-stopped
-    working_dir: /code
-    volumes:
-      - type: bind
-        source: ./
-        target: /code
-    networks:
-      - moffhub_internal
-    environment:
-      APP_ENV: local
-      CONTAINER_ROLE: scheduler
+    template_scheduler:
+        image: template
+        container_name: template_scheduler
+        depends_on:
+            - template-app
+        restart: unless-stopped
+        working_dir: /code
+        volumes:
+            - type: bind
+              source: ./
+              target: /code
+        networks:
+            - marines-internal
+        environment:
+            APP_ENV: local
+            CONTAINER_ROLE: scheduler
 networks:
-  moffhub_internal:
-    name: moffhub_internal
-    external: true
+    marines-internal:
+        name: marines-internal
+        external: true

@@ -15,15 +15,15 @@ if [ ! -f ".env" ]; then
 fi
 
 # Install composer and run 'composer install'
-docker exec -it moff_template_app composer install
+docker exec -it template_code composer install
 
 # Build Databases
 docker exec -i moffhub_mariadb106 mysql -uroot -proot --execute="CREATE DATABASE IF NOT EXISTS template"
 
 # Setup assets
-docker exec -it moff_template_app yarn install
-docker exec -it moff_template_app yarn run build
+docker exec -it template_code yarn install
+docker exec -it template_code yarn run build
 
 # Execute commands to setup laravel
-docker exec -it moff_template_app php artisan key:generate
-docker exec -it moff_template_app php artisan migrate:fresh --seed
+docker exec -it template_code php artisan key:generate
+docker exec -it template_code php artisan migrate:fresh --seed

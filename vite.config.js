@@ -28,7 +28,7 @@ export default defineConfig({
     server: {
         https: env === 'production',
         hmr: {
-            host: 'mofftemplate.docker',
+            host: 'template.docker',
         },
         host: '0.0.0.0',
         port: 5178
